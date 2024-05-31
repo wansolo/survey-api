@@ -1,0 +1,91 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Survey API",
+        "description": "API Documentation for the Survey Application",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/surveys": {
+            "get": {
+                "summary": "List all surveys",
+                "operationId": "7e96246f34de1fcd663f2d95a5079073",
+                "responses": {
+                    "200": {
+                        "description": "A list of surveys"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new survey",
+                "operationId": "a2cd6709081ad25c80c95f4cd8e97e2e",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "questions": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "question": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "text",
+                                                        "single_choice",
+                                                        "multiple_choice",
+                                                        "image"
+                                                    ]
+                                                },
+                                                "options": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Survey created successfully"
+                    }
+                }
+            }
+        },
+        "/api/surveys/{survey}": {
+            "get": {
+                "summary": "Show a specific survey",
+                "operationId": "4971726c235bb814eeb51bcb22978ef9",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Survey details"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: Survey API
+  version: 1.0.0
+  description: API Documentation for the Survey Application
+components:
+  schemas:
+    Survey:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    Question:
+      type: object
+      properties:
+        id:
+          type: integer
+        survey_id:
+          type: integer
+        question:
+          type: string
+        type:
+          type: string
+          enum: [text, single_choice, multiple_choice, image]
+        options:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    CreateSurveyRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    SubmitResponsesRequest:
+      type: object
+      properties:
+        responses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Response'
+    Response:
+      type: object
+      properties:
+        id:
+          type: integer
+        survey_id:
+          type: integer
+        question_id:
+          type: integer
+        response:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    SurveyResults:
+      type: object
+      properties:
+        survey:
+          $ref: '#/components/schemas/Survey'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+paths:
+  /api/surveys:
+    get:
+      tags:
+        - Surveys
+      summary: Get list of surveys
+      operationId: getSurveys
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Survey'
+    post:
+      tags:
+        - Surveys
+      summary: Create a new survey
+      operationId: createSurvey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSurveyRequest'
+      responses:
+        201:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Survey'
+  /api/surveys/{survey}:
+    get:
+      tags:
+        - Surveys
+      summary: Get a specific survey
+      operationId: getSurvey
+      parameters:
+        - name: survey
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Survey'
+  /api/surveys/{survey}/responses:
+    post:
+      tags:
+        - Responses
+      summary: Submit responses to a survey
+      operationId: storeResponses
+      parameters:
+        - name: survey
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitResponsesRequest'
+      responses:
+        201:
+          description: Responses submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Responses submitted successfully
+  /api/surveys/{survey}/results:
+    get:
+      tags:
+        - Results
+      summary: Get survey results
+      operationId: getSurveyResults
+      parameters:
+        - name: survey
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurveyResults'
